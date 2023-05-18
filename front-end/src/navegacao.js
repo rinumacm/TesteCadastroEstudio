@@ -33,10 +33,10 @@ export function Navegacao() {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto" >
-            <Nav.Link href="#home" style={{ color: "#ffffff" }} >Home</Nav.Link>
+            <Nav.Link href="/" style={{ color: "#ffffff" }} >Home</Nav.Link>
             <Nav.Link href="#link" style={{ color: "#ffffff" }}>Estúdios</Nav.Link>
             <Nav.Link href="#link" style={{ color: "#ffffff" }}>Contato</Nav.Link>
-            <Nav.Link href="#link" style={{ color: "#ffffff" }}>Cadastre seu Estudio</Nav.Link>
+            <Nav.Link href="/cadastroestudio" style={{ color: "#ffffff" }}>Cadastre seu Estudio</Nav.Link>
             <Nav.Link href="#link" style={{ color: "#ffffff" }}>Encontre Estudios</Nav.Link>
             </Nav>
 

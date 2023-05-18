@@ -134,7 +134,7 @@ export function Signup() {
                                         <button type='submit' className="btn btn-lg btn-primary w-100 fs-6" style={{ background: '#546CCF' }} >Criar</button>
                                     </div>
                                     <div className="input-group mb-3">
-                                        <button className="btn btn-lg btn-light w-100 fs-6">
+                                        <button className="btn btn-lg btn-light w-100 fs-6 ">
                                             <img src={Logogoogle} style={{ width: "20px" }} className="me-2" alt="google" />
                                             <small>Criar conta usando o Google</small>
                                         </button>

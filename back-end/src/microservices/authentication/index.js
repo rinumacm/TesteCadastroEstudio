@@ -1,44 +1,50 @@
-const axios = require('axios')
 require('dotenv').config({ path: '../../../.env' });
 
-// Express Config
+//Express config
 const express = require('express');
 const app = express();
 app.use(express.json());
 
-// Models
-const User = require('../database/User');
-const RefreshToken = require('../database/RefreshToken');
-
 // JWT
 const jwt = require('jsonwebtoken');
+const { jwtAuthentication } = require('../authentication/middleware');
 
-var cors = require('cors')
-app.use(cors());
+// Models
+const Studio = require('../database/Studio');
+const StudioSchedule = require('../database/StudioSchedule');
+const Instruments = require('../database/Instruments');
+const User = require('../database/User');
+const { Op } = require('sequelize');
 
-app.post('/signup', async (req, res) => {
-    // Add Input validation here
+app.post('/studios', jwtAuthentication, async (req, res) => {
+    const {
+        amp_guitar,
+        box,
+        amp_bass,
+        drums,
+        soundboard,
+        return_system,
+        monitors,
+        interface,
+        guitar,
+        bass,
+        keyboard_synth,
+        microphone,
+        user_id
 
-    if (await User.findOne({ where: { email: req.body.email } })) {
+    } = req.body;
+
+    // Simple Validation
+    const requiredFields = { amp_guitar,box,amp_bass,drums,soundboard,return_system,
+    monitors,interface,guitar,bass,keyboard_synth,microphone };
+    const blankFields = Object.keys(requiredFields).filter(key => !requiredFields[key]);
+    if (blankFields.length) {
         return res.json({
-            error: true,
-            message: 'Já existe um usuário com este e-mail cadastrado!'
-        }).status(400);
+            errors: blankFields.map(field => `Valor em branco para o campo ${field}`),
+        }, 400);
     }
 
-    await User.create(req.body)
-        .then(() => {
-            axios.post('http://localhost:7000/event', {log: "New user"})
-            return res.json({
-                error: false,
-                message: "Usuário Cadastrado com sucesso"
-            })
-        }).catch(() => {
-            return res.status(400).json({
-                error: true,
-                message: "Erro: Usuário não cadastrado"
-            });
-        });
+  
 });
 
 app.post('/event', (req, res) => {
@@ -47,47 +53,18 @@ app.post('/event', (req, res) => {
     return res.status(200)
 })
 
-app.post('/login', async (req, res) => {
-    const { email, password } = req.body;
-
-    if (!email || !password) return res.send('E-mail ou Senha em brancos!', 400);
-
-    let user = await User.findOne({
+app.get('/studios', jwtAuthentication, async (req, res) => {
+    const studios = await Studio.findAll({
         where: {
-            email,
-            password
+            name: {
+                [Op.like]: `%${req.body.q}%`
+            }
         }
     });
+    console.log(studios);
+    return res.send(studios, 200);
+})
 
-    if (user) {
-        const { password, ...rest } = JSON.parse(JSON.stringify(user));
-        user = rest;
-
-        const accessToken = generateAccessToken(user);
-
-        return res.json({ accessToken });
-    }
-
-    return res.send('Usuário não encontrado', 400);
+app.listen(5000, () => {
+    console.log('Studios is listening on PORT 5000');
 });
-
-app.delete('/logout', async (req, res) => {
-    await RefreshToken.destroy({
-        where: {
-            key: req.body.refreshToken
-        }
-    });
-
-    res.sendStatus(204);
-});
-
-
-function generateAccessToken(user) {
-    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET_KEY);
-}
-
-
-app.listen(3000, () => {
-    console.log("Authentication is running. Port 3000")
-});
-
