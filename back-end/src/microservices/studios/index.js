@@ -75,6 +75,6 @@ app.get('/studios', jwtAuthentication, async (req, res) => {
     return res.send(studios, 200);
 })
 
-app.listen(5000, () => {
-    console.log('Studios is listening on PORT 5000');
+app.listen(10000, () => {
+    console.log('Studios is listening on PORT 10000');
 });

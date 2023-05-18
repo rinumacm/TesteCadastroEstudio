@@ -23,7 +23,7 @@ app.post('/event', async(req, res) => {
     }
     try{
         //Microserviço de Studios
-        await axios.post('http://localhost:5000/event', event)
+        await axios.post('http://localhost:10000/event', event)
     }catch(error){
         console.log(error)
     }
